@@ -1,0 +1,23 @@
+{
+  "name": "hvm-js",
+  "version": "0.1.1",
+  "description": "High-order Virtual Machine (HVM) on JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kindelia/hvm-js.git"
+  },
+  "author": "VictorTaelin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kindelia/hvm-js/issues"
+  },
+  "homepage": "https://github.com/kindelia/hvm-js#readme",
+  "dependencies": {
+    "hvm-nodejs": "^0.1.77",
+    "hvm-web": "^0.1.77"
+  }
+}
