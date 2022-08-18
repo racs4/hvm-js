@@ -51,7 +51,7 @@ export default async function init_runtime(code) {
 function readback(rt, loc, vars = null, stks = {}) {
   var term = rt.at(loc);
   switch (hvm.Runtime.get_tag(term)) {
-    case VAR: {
+    case rt.VAR: {
       var loc = hvm.Runtime.get_loc(term);
       while (vars) {
         if (vars.loc === loc) {
@@ -62,7 +62,7 @@ function readback(rt, loc, vars = null, stks = {}) {
       }
       return null;
     }
-    case DP0: {
+    case rt.DP0: {
       var col = hvm.Runtime.get_ext(term);
       var val = rt.at(hvm.Runtime.get_loc(term, 2));
       stks[col] = stks[col] || [];
@@ -71,7 +71,7 @@ function readback(rt, loc, vars = null, stks = {}) {
       stks[col].pop();
       return result;
     }
-    case DP1: {
+    case rt.DP1: {
       var col = hvm.Runtime.get_ext(term);
       var val = rt.at(hvm.Runtime.get_loc(term, 2));
       stks[col] = stks[col] || [];
@@ -80,7 +80,7 @@ function readback(rt, loc, vars = null, stks = {}) {
       stks[col].pop();
       return result;
     }
-    case CTR: {
+    case rt.CTR: {
       var ctid = hvm.Runtime.get_ext(term);
       var name = rt.get_name(ctid);
       var arit = rt.get_arity(ctid);
@@ -91,7 +91,7 @@ function readback(rt, loc, vars = null, stks = {}) {
       }
       return {$: "Ctr", name, args};
     }
-    case FUN: {
+    case rt.FUN: {
       var ctid = hvm.Runtime.get_ext(term);
       var name = rt.get_name(ctid);
       var arit = rt.get_arity(ctid);
@@ -102,21 +102,21 @@ function readback(rt, loc, vars = null, stks = {}) {
       }
       return {$: "Fun", name, args};
     }
-    case LAM: {
+    case rt.LAM: {
       return vah => {
         var vars = {$: "Ext", loc, vah, vars};
         var body = hvm.Runtime.get_loc(term, BigInt(1));
         return readback(rt, body, vars, vars, stks);
       };
     }
-    case APP: {
+    case rt.APP: {
       var func = rt.at(hvm.Runtime.get_loc(term, 0));
       var argm = rt.at(hvm.Runtime.get_loc(term, 1));
       var func = readback(rt, func, vars, stks);
       var argm = readback(rt, argm, vars, stks);
       return func(argm);
     }
-    case SUP: {
+    case rt.SUP: {
       var col = hvm.Runtime.get_ext(term);
       var stack = stks[col] || [];
       if (stack.length > 0) {
@@ -134,32 +134,32 @@ function readback(rt, loc, vars = null, stks = {}) {
         return {$: "Sup", val0, val1};
       }
     }
-    case OP2: {
+    case rt.OP2: {
       var val0 = rt.at(hvm.Runtime.get_loc(term, 0));
       var val1 = rt.at(hvm.Runtime.get_loc(term, 1));
       var val0 = readback(rt, val0, vars, stks);
       var val1 = readback(rt, val1, vars, stks);
       switch (hvm.Runtime.get_ext(term)) {
-        case ADD: return (val0 + val1) & 0xFFFFFFFFFFFFFFFn;
-        case SUB: return (val0 - val1) & 0xFFFFFFFFFFFFFFFn;
-        case MUL: return (val0 * val1) & 0xFFFFFFFFFFFFFFFn;
-        case DIV: return (val0 / val1) & 0xFFFFFFFFFFFFFFFn;
-        case MOD: return (val0 % val1) & 0xFFFFFFFFFFFFFFFn;
-        case AND: return (val0 & val1) & 0xFFFFFFFFFFFFFFFn;
-        case OR : return (val0 | val1) & 0xFFFFFFFFFFFFFFFn;
-        case XOR: return (val0 ^ val1) & 0xFFFFFFFFFFFFFFFn;
-        case SHL: return (val0 << val1) & 0xFFFFFFFFFFFFFFFn;
-        case SHR: return (val0 >> val1) & 0xFFFFFFFFFFFFFFFn;
-        case LTN: return val0 <  val1 ? 1n : 0n;
-        case LTE: return val0 >= val1 ? 1n : 0n;
-        case EQL: return val0 == val1 ? 1n : 0n;
-        case GTE: return val0 <= val1 ? 1n : 0n;
-        case GTN: return val0 <  val1 ? 1n : 0n;
-        case NEQ: return val0 != val1 ? 1n : 0n;
+        case rt.ADD: return (val0 + val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.SUB: return (val0 - val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.MUL: return (val0 * val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.DIV: return (val0 / val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.MOD: return (val0 % val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.AND: return (val0 & val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.OR : return (val0 | val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.XOR: return (val0 ^ val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.SHL: return (val0 << val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.SHR: return (val0 >> val1) & 0xFFFFFFFFFFFFFFFn;
+        case rt.LTN: return val0 <  val1 ? 1n : 0n;
+        case rt.LTE: return val0 >= val1 ? 1n : 0n;
+        case rt.EQL: return val0 == val1 ? 1n : 0n;
+        case rt.GTE: return val0 <= val1 ? 1n : 0n;
+        case rt.GTN: return val0 <  val1 ? 1n : 0n;
+        case rt.NEQ: return val0 != val1 ? 1n : 0n;
         default : return 0;
       };
     }
-    case NUM: {
+    case rt.NUM: {
       var numb = hvm.Runtime.get_val(term);
       return numb;
     }
