@@ -10,38 +10,38 @@ export default async function init_runtime(code) {
     rt[key] = hvm.Runtime[key];
   }
 
+  rt.DP0 = hvm.Runtime.DP0();
+  rt.DP1 = hvm.Runtime.DP1();
+  rt.VAR = hvm.Runtime.VAR();
+  rt.ARG = hvm.Runtime.ARG();
+  rt.ERA = hvm.Runtime.ERA();
+  rt.LAM = hvm.Runtime.LAM();
+  rt.APP = hvm.Runtime.APP();
+  rt.SUP = hvm.Runtime.SUP();
+  rt.CTR = hvm.Runtime.CTR();
+  rt.FUN = hvm.Runtime.FUN();
+  rt.OP2 = hvm.Runtime.OP2();
+  rt.NUM = hvm.Runtime.NUM();
+  rt.ADD = hvm.Runtime.ADD();
+  rt.SUB = hvm.Runtime.SUB();
+  rt.MUL = hvm.Runtime.MUL();
+  rt.DIV = hvm.Runtime.DIV();
+  rt.MOD = hvm.Runtime.MOD();
+  rt.AND = hvm.Runtime.AND();
+  rt.OR  = hvm.Runtime.OR();
+  rt.XOR = hvm.Runtime.XOR();
+  rt.SHL = hvm.Runtime.SHL();
+  rt.SHR = hvm.Runtime.SHR();
+  rt.LTN = hvm.Runtime.LTN();
+  rt.LTE = hvm.Runtime.LTE();
+  rt.EQL = hvm.Runtime.EQL();
+  rt.GTE = hvm.Runtime.GTE();
+  rt.GTN = hvm.Runtime.GTN();
+  rt.NEQ = hvm.Runtime.NEQ();
+
   rt.readback = loc => readback(rt, loc);
   rt.string = term => string(term);
   rt.list = term => list(term);
-
-  rt.DP0 = rt.Runtime.DP0();
-  rt.DP1 = rt.Runtime.DP1();
-  rt.VAR = rt.Runtime.VAR();
-  rt.ARG = rt.Runtime.ARG();
-  rt.ERA = rt.Runtime.ERA();
-  rt.LAM = rt.Runtime.LAM();
-  rt.APP = rt.Runtime.APP();
-  rt.SUP = rt.Runtime.SUP();
-  rt.CTR = rt.Runtime.CTR();
-  rt.FUN = rt.Runtime.FUN();
-  rt.OP2 = rt.Runtime.OP2();
-  rt.NUM = rt.Runtime.NUM();
-  rt.ADD = rt.Runtime.ADD();
-  rt.SUB = rt.Runtime.SUB();
-  rt.MUL = rt.Runtime.MUL();
-  rt.DIV = rt.Runtime.DIV();
-  rt.MOD = rt.Runtime.MOD();
-  rt.AND = rt.Runtime.AND();
-  rt.OR  = rt.Runtime.OR();
-  rt.XOR = rt.Runtime.XOR();
-  rt.SHL = rt.Runtime.SHL();
-  rt.SHR = rt.Runtime.SHR();
-  rt.LTN = rt.Runtime.LTN();
-  rt.LTE = rt.Runtime.LTE();
-  rt.EQL = rt.Runtime.EQL();
-  rt.GTE = rt.Runtime.GTE();
-  rt.GTN = rt.Runtime.GTN();
-  rt.NEQ = rt.Runtime.NEQ();
 
   return rt;
 }
