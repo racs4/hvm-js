@@ -3,53 +3,57 @@ HVM on JavaScript
 
 [HVM](https://github.com/kindelia/hvm) is now available as a JavaScript library!
 
-To use it, first install with `npm`:
+Installing
+----------
 
-```
-npm i --save hvm-js
-```
 
-Then, import it:
+Usage
+-----
 
-```javascript
-// On Node.js
-var hvm = require("hvm-js");
+1. Install
 
-// On the browser
-import * as hvm from "hvm-js";
-```
+    ```bash
+    npm i --save hvm-js
+    ```
 
-Then, create a runtime from an HVM source code:
+2. Import
 
-```javascript
-// Instantiates an HVM runtime given a source code
-var rt = await hvm.runtime(`
-  (U60.sum 0) = 0
-  (U60.sum n) = (+ n (U60.sum (- n 1)))
-`);
-```
+    ```javascript
+    // On Node.js
+    var hvm = require("hvm-js");
 
-Finally, evaluate expressions to normal form with `rt.eval`:
+    // On the browser
+    import * as hvm from "hvm-js";
+    ```
 
-```
-console.log(rt.eval("(U60.sum 10000000)"));
-```
+3. Instantiate a runtime
 
-You can also handle HVM's memory directly:
+    ```javascript
+    // Instantiates an HVM runtime given a source code
+    var rt = await hvm.runtime(`
+      (U60.sum 0) = 0
+      (U60.sum n) = (+ n (U60.sum (- n 1)))
+    `);
+    ```
 
-```javascript
-// Allocates an expression without reducing it
-let loc = rt.alloc_code("(U60.sum 10)");
+4. Evaluate expressions
 
-// Reduces it to weak head normal form:
-rt.reduce(loc);
+    ```javascript
+    console.log(rt.eval("(U60.sum 10000000)"));
+    ```
 
-// If the result is a number, print its value:
-let term = rt.at(loc);
-if (rt.get_tag(term) == rt.NUM) {
-  console.log("Result is Num(" + rt.get_val(term) + ")");
-}
-```
+5. Advanced: weak normal form
 
-This allows you to reduce a term lazily, layer by layer. This is useful, for
-example, to implement IO actions and FFI with your app.
+    ```javascript
+    // Allocates an expression without reducing it
+    let loc = rt.alloc_code("(U60.sum 10)");
+
+    // Reduces it to weak head normal form:
+    rt.reduce(loc);
+
+    // If the result is a number, print its value:
+    let term = rt.at(loc);
+    if (rt.get_tag(term) == rt.NUM) {
+      console.log("Result is Num(" + rt.get_val(term) + ")");
+    }
+    ```
