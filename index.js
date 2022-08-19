@@ -40,6 +40,10 @@ export default async function init_runtime(code) {
   rt.GTN = hvm.Runtime.GTN();
   rt.NEQ = hvm.Runtime.NEQ();
 
+  rt.IO_DO_OUTPUT = rt.get_id("IO.do_output");
+  rt.IO_DO_INPUT = rt.get_id("IO.do_input");
+  rt.IO_DONE = rt.get_id("IO.done");
+
   rt.readback = loc => readback(rt, loc);
   rt.alloc_term = value => alloc_term(rt, value);
   rt.build_term = value => build_term(rt, value);
@@ -51,6 +55,7 @@ export default async function init_runtime(code) {
   rt.alloc_app = (func, argm) => alloc_app(rt, func, argm);
   rt.alloc_fun = (fun, args) => alloc_fun(rt, fun, args);
   rt.create_fun = (fun, args) => create_fun(rt, fun, args);
+  rt.run_io = (host) => run_io(rt, host);
 
   rt.unstring = str => unstring(str);
   rt.string = term => string(term);
@@ -262,6 +267,53 @@ function alloc_app(rt, func, argm) {
 function alloc_fun(rt, fun, args) {
   var fun = rt.create_fun(fun, args);
   return alloc_ptr(rt, fun);
+}
+
+// Runs an IO action. Returns the result Ptr. 
+async function run_io(rt, host) {
+  rt.reduce(host);
+  //console.log("run_io", rt.show(host));
+  var term = rt.at(host);
+  switch (rt.get_tag(term)) {
+    case rt.CTR: {
+      var ctid = rt.get_ext(term);
+      switch (ctid) {
+        case rt.IO_DO_OUTPUT: {
+          var text = rt.at(rt.get_loc(term, 0n));
+          var cont = rt.at(rt.get_loc(term, 1n));
+          var text = rt.readback(rt.get_loc(term, 0n));
+          console.log(rt.string(text));
+          var cont = rt.alloc_app(cont, rt.Num(0n));
+          var done = await run_io(rt, cont);
+          rt.clear(host, 1n);
+          rt.clear(rt.get_loc(term, 0n), 2n);
+          return done;
+        }
+        case rt.IO_DO_INPUT: {
+          var cont = rt.at(rt.get_loc(term, 0n)); 
+          var text = prompt("Input:");
+          var text = rt.at(rt.alloc_term(rt.unstring(text)));
+          var cont = rt.alloc_app(cont, text);
+          var done = await run_io(rt, cont);
+          rt.clear(host, 1n);
+          rt.clear(rt.get_loc(term, 0n), 1n);
+          return done;
+        }
+        case rt.IO_DONE: {
+          // TODO: implement compute_at
+          rt.reduce(rt.get_loc(term, 0n));
+          let retr = rt.at(rt.get_loc(term, 0n));
+          rt.clear(host, 1n);
+          rt.clear(rt.get_loc(term, 0n), 1n);
+          return retr;
+        }
+        break;
+      }
+    }
+    default: {
+      throw "HVM effect runtime type error.";
+    }
+  }
 }
 
 // string (term: JSON) : Option String
