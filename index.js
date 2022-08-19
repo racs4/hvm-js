@@ -69,7 +69,7 @@ function readback(rt, loc, stks = {}) {
     }
     case rt.DP0: {
       var col = hvm.Runtime.get_ext(term);
-      var val = rt.at(hvm.Runtime.get_loc(term, 2));
+      var val = rt.at(hvm.Runtime.get_loc(term, 2n));
       stks[col] = stks[col] || [];
       stks[col].push(false);
       var result = readback(rt, val, stks);
@@ -78,7 +78,7 @@ function readback(rt, loc, stks = {}) {
     }
     case rt.DP1: {
       var col = hvm.Runtime.get_ext(term);
-      var val = rt.at(hvm.Runtime.get_loc(term, 2));
+      var val = rt.at(hvm.Runtime.get_loc(term, 2n));
       stks[col] = stks[col] || [];
       stks[col].push(true);
       var result = readback(rt, val, stks);
@@ -109,13 +109,13 @@ function readback(rt, loc, stks = {}) {
     }
     case rt.LAM: {
       var name = "x" + loc;
-      var body = hvm.Runtime.get_loc(term, BigInt(1));
+      var body = hvm.Runtime.get_loc(term, 1n);
       var body = readback(rt, body, stks);
       return {$: "Lam", name, body};
     }
     case rt.APP: {
-      var func = rt.at(hvm.Runtime.get_loc(term, 0));
-      var argm = rt.at(hvm.Runtime.get_loc(term, 1));
+      var func = rt.at(hvm.Runtime.get_loc(term, 0n));
+      var argm = rt.at(hvm.Runtime.get_loc(term, 1n));
       var func = readback(rt, func, stks);
       var argm = readback(rt, argm, stks);
       return {$: "App", func, argm};
@@ -131,16 +131,16 @@ function readback(rt, loc, stks = {}) {
         return got;
       } else {
         var name = "HVM.sup".to_string(); // lang::Term doesn't have a Sup variant
-        var val0 = rt.at(hvm.Runtime.get_loc(term, 0));
-        var val1 = rt.at(hvm.Runtime.get_loc(term, 1));
+        var val0 = rt.at(hvm.Runtime.get_loc(term, 0n));
+        var val1 = rt.at(hvm.Runtime.get_loc(term, 1n));
         var val0 = readback(rt, val0, stks);
         var val1 = readback(rt, val1, stks);
         return {$: "Sup", val0, val1};
       }
     }
     case rt.OP2: {
-      var val0 = rt.at(hvm.Runtime.get_loc(term, 0));
-      var val1 = rt.at(hvm.Runtime.get_loc(term, 1));
+      var val0 = rt.at(hvm.Runtime.get_loc(term, 0n));
+      var val1 = rt.at(hvm.Runtime.get_loc(term, 1n));
       var val0 = readback(rt, val0, stks);
       var val1 = readback(rt, val1, stks);
       var oper;
