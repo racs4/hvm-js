@@ -225,7 +225,7 @@ function eval_term(rt, value) {
 function unstring(str) {
   var obj = {"$": "Ctr", name: "String.nil", args: []};
   for (var i = 0; i < str.length; ++i) {
-    var num = {"$": "Num", numb: BigInt(String.charCodeAt(i))};
+    var num = {"$": "Num", numb: BigInt(str.charCodeAt(str.length - i - 1))};
     obj = {"$": "Ctr", name: "String.cons", args: [num, obj]};
   }
   return obj;
