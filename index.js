@@ -47,8 +47,8 @@ export default async function init_runtime(code) {
   rt.eval_term = value => eval_term(rt, value);
 
   rt.alloc_ptr = term => alloc_ptr(rt, term);
-  rt.create_app = (func, argm) => rt.create_app(func, argm);
-  rt.alloc_app = (func, argm) => rt.alloc_app(func, argm);
+  rt.create_app = (func, argm) => create_app(rt, func, argm);
+  rt.alloc_app = (func, argm) => alloc_app(rt, func, argm);
 
   rt.unstring = str => unstring(str);
   rt.string = term => string(term);
@@ -232,21 +232,21 @@ function unstring(str) {
 }
 
 function alloc_ptr(rt, term) {
-  var host = alloc(rt, 1);
-  rt.link(loc, term);
+  var host = rt.alloc(1n);
+  rt.link(host, term);
   return host;
 }
 
 function create_app(rt, func, argm) {
-  var host = rt.alloc(2);
-  rt.link(host + 0, func);
-  rt.link(host + 1, argm);
+  var host = rt.alloc(2n);
+  rt.link(host + 0n, func);
+  rt.link(host + 1n, argm);
   return rt.App(host);
 }
 
 function alloc_app(rt, func, argm) {
   var app = rt.create_app(func, argm);
-  return alloc_lnk(rt, app);
+  return alloc_ptr(rt, app);
 }
 
 // string (term: JSON) : Option String
