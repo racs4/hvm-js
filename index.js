@@ -49,6 +49,8 @@ export default async function init_runtime(code) {
   rt.alloc_ptr = term => alloc_ptr(rt, term);
   rt.create_app = (func, argm) => create_app(rt, func, argm);
   rt.alloc_app = (func, argm) => alloc_app(rt, func, argm);
+  rt.alloc_fun = (fun, args) => alloc_fun(rt, fun, args);
+  rt.create_fun = (fun, args) => create_fun(rt, fun, args);
 
   rt.unstring = str => unstring(str);
   rt.string = term => string(term);
@@ -244,9 +246,22 @@ function create_app(rt, func, argm) {
   return rt.App(host);
 }
 
+function create_fun(rt, fun, args) {
+  let node = rt.alloc(BigInt(args.length));
+  for (var i = 0; i < args.length; ++i) {
+    rt.link(node + BigInt(i), args[i]);
+  }
+  return rt.Fun(fun, node);
+}
+
 function alloc_app(rt, func, argm) {
   var app = rt.create_app(func, argm);
   return alloc_ptr(rt, app);
+}
+
+function alloc_fun(rt, fun, args) {
+  var fun = rt.create_fun(fun, args);
+  return alloc_ptr(rt, fun);
 }
 
 // string (term: JSON) : Option String
