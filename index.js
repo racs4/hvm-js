@@ -269,7 +269,7 @@ function alloc_fun(rt, fun, args) {
   return alloc_ptr(rt, fun);
 }
 
-// Runs an IO action. Returns the result Ptr. 
+// Runs an IO action. Returns the result Ptr. Clears host.
 async function run_io(rt, host) {
   rt.reduce(host);
   //console.log("run_io", rt.show(host));
