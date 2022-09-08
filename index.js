@@ -42,6 +42,7 @@ export default async function init_runtime(code) {
 
   rt.IO_DO_OUTPUT = rt.get_id("IO.do_output");
   rt.IO_DO_INPUT = rt.get_id("IO.do_input");
+  rt.IO_DO_FETCH = rt.get_id("IO.do_fetch");
   rt.IO_DONE = rt.get_id("IO.done");
 
   rt.readback = loc => readback(rt, loc);
@@ -287,6 +288,8 @@ async function run_io(rt, host) {
           var done = await run_io(rt, cont);
           rt.clear(host, 1n);
           rt.clear(rt.get_loc(term, 0n), 2n);
+          var text = rt.at(rt.get_loc(term, 0n));
+          rt.collect(text);
           return done;
         }
         case rt.IO_DO_INPUT: {
@@ -298,6 +301,39 @@ async function run_io(rt, host) {
           rt.clear(host, 1n);
           rt.clear(rt.get_loc(term, 0n), 1n);
           return done;
+        }
+        case rt.IO_DO_FETCH: {
+          console.log("io_do_fetch");
+          var url = rt.string(rt.readback(rt.get_loc(term, 0n)));
+          console.log("aaaa ->", url);
+          var body = await (await fetch(url)).text();
+          console.log("body ->", body);
+          return rt.Num(0n);
+          var text = rt.at(rt.alloc_term(rt.unstring(body)));
+          var cont = rt.at(rt.get_loc(term, 0n)); 
+          var app0 = rt.alloc_app(cont, text);
+          rt.clear(rt.get_loc(term, 0n), 3n);
+          var opts = rt.at(rt.get_loc(term, 1n));
+          rt.collect(opts);
+          var done = rt.App(app0);
+          return done;
+          //if let Some(url) = readback_string(mem, funs, get_loc(term, 0)) {
+            //let body = reqwest::blocking::get(url).unwrap().text().unwrap(); // FIXME: treat
+            //let cont = ask_arg(mem, term, 2);
+            //let app0 = alloc(mem, 2);
+            //let text = make_string(mem, &body);
+            //link(mem, app0 + 0, cont);
+            //link(mem, app0 + 1, text);
+            //clear(mem, get_loc(term, 0), 2);
+            //let opts = ask_arg(mem, term, 1); // FIXME: use options
+            //collect(mem, opts);
+            //let done = App(app0);
+            //link(mem, host, done);
+          //} else {
+            //println!("Runtime type error: attempted to print a non-string.");
+            //println!("{}", crate::readback::as_code(mem, i2n, get_loc(term, 0)));
+            //std::process::exit(0);
+          //}
         }
         case rt.IO_DONE: {
           // TODO: implement compute_at
