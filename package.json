@@ -1,6 +1,6 @@
 {
   "name": "hvm-js",
-  "version": "0.2.26",
+  "version": "0.2.27",
   "description": "High-order Virtual Machine (HVM) on JavaScript",
   "main": "index_nodejs.js",
   "browser": "index_web.js",
@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/kindelia/hvm-js#readme",
   "dependencies": {
-    "hvm-nodejs": "^0.1.85",
-    "hvm-web": "^0.1.85"
+    "hvm-nodejs": "^0.1.88",
+    "hvm-web": "^0.1.88"
   }
 }

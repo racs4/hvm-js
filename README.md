@@ -66,5 +66,6 @@ var rt = await hvm(`
     (IO.done 42)))))
 `);
 
-console.log(await rt.run_io_term({$: "Fun", name: "Main", args: []}));
+await rt.run_io_term({$: "Fun", name: "Main", args: []});
+console.log("");
 ```
