@@ -15,10 +15,6 @@ Usage
 2. Import
 
     ```javascript
-    // On Node.js
-    var hvm = require("hvm-js"); // not working yet, see below
-
-    // On the browser
     import * as hvm from "hvm-js";
     ```
 
@@ -53,14 +49,3 @@ Usage
       console.log("Result is Num(" + rt.get_val(term) + ")");
     }
     ```
-
-TODO
-----
-
-The Node.js version of `hvm-js` isn't developed yet, but you can use:
-
-```
-var hvm = require("hvm-nodejs");
-```
-
-Temporarily. It has a smaller API, but works the same.

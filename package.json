@@ -1,8 +1,10 @@
 {
   "name": "hvm-js",
-  "version": "0.2.23",
+  "version": "0.2.24",
   "description": "High-order Virtual Machine (HVM) on JavaScript",
-  "main": "index.js",
+  "main": "index_nodejs.js",
+  "browser": "index_web.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
