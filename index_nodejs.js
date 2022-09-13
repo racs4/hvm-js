@@ -3,8 +3,8 @@ import * as hvm_nodejs from "hvm-nodejs";
 
 import readline from "readline";
 
-export default function init_hvm(code) {
-  var rt = boot_hvm(() => {}, hvm_nodejs)(code);
+export default async function init_hvm(code) {
+  var rt = await boot_hvm(() => {}, hvm_nodejs)(code);
   rt.do_input = do_input;
   rt.do_output = do_output;
   return rt;
