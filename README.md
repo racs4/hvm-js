@@ -3,49 +3,68 @@ HVM on JavaScript
 
 [HVM](https://github.com/kindelia/hvm) is now available as a JavaScript library!
 
-Usage
------
+Installing
+----------
 
-1. Install
+```bash
+npm i --save hvm-js
+```
 
-    ```bash
-    npm i --save hvm-js
-    ```
+Examples
+--------
 
-2. Import
+### Evaluating a term to normal form
 
-    ```javascript
-    import * as hvm from "hvm-js";
-    ```
+```javascript
+import hvm from "hvm-js";
 
-3. Instantiate a runtime
+// Instantiates an HVM runtime given a source code
+var rt = await hvm.runtime(`
+  (U60.sum 0) = 0
+  (U60.sum n) = (+ n (U60.sum (- n 1)))
+`);
 
-    ```javascript
-    // Instantiates an HVM runtime given a source code
-    var rt = await hvm.runtime(`
-      (U60.sum 0) = 0
-      (U60.sum n) = (+ n (U60.sum (- n 1)))
-    `);
-    ```
+console.log(rt.eval("(U60.sum 10000000)"));
+```
 
-4. Evaluate expressions
 
-    ```javascript
-    console.log(rt.eval("(U60.sum 10000000)"));
-    ```
+### Evaluating to weak head normal form
 
-5. Advanced: weak normal form
+```javascript
+import hvm from "hvm-js";
 
-    ```javascript
-    // Allocates an expression without reducing it
-    let loc = rt.alloc_code("(U60.sum 10)");
+// Instantiates an HVM runtime given a source code
+var rt = await hvm.runtime(`
+  (U60.sum 0) = 0
+  (U60.sum n) = (+ n (U60.sum (- n 1)))
+`);
 
-    // Reduces it to weak head normal form:
-    rt.reduce(loc);
+// Allocates an expression without reducing it
+let loc = rt.alloc_code("(U60.sum 10)");
 
-    // If the result is a number, print its value:
-    let term = rt.at(loc);
-    if (rt.get_tag(term) == rt.NUM) {
-      console.log("Result is Num(" + rt.get_val(term) + ")");
-    }
-    ```
+// Reduces it to weak head normal form:
+rt.reduce(loc);
+
+// If the result is a number, print its value:
+let term = rt.at(loc);
+if (rt.get_tag(term) == rt.NUM) {
+  console.log("Result is Num(" + rt.get_val(term) + ")");
+}
+```
+
+### Running an IO program
+
+```javascript
+import hvm from "hvm-js";
+
+var rt = await hvm(`
+  Main =
+    (IO.do_output "Name: " λ_
+    (IO.do_input           λname
+    (IO.do_output "Hi, "   λ_
+    (IO.do_output name     λ_
+    (IO.done 42)))))
+`);
+
+console.log(await rt.run_io_term({$: "Fun", name: "Main", args: []}));
+```

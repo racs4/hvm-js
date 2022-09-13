@@ -1,6 +1,6 @@
 {
   "name": "hvm-js",
-  "version": "0.2.24",
+  "version": "0.2.25",
   "description": "High-order Virtual Machine (HVM) on JavaScript",
   "main": "index_nodejs.js",
   "browser": "index_web.js",
